@@ -8,7 +8,8 @@ require('dotenv').config()
 const app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.json())
-app.use(express.static('public'));
+app.use(express.static('view/dist'))
+
 
 const corsOptions ={
     origin:['http://localhost:8081', 'http://localhost:8080', "http://192.168.31.20:8080"], 
