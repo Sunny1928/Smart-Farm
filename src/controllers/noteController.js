@@ -12,6 +12,8 @@ const addNote = async (req, res) => {
         comment: req.body.comment,
         icon: req.body.icon,
         smallBlockId: req.body.smallBlockId,
+        farmId: req.body.farmId,
+        sensorId: req.body.sensorId,
     }
 
     const note = await Note.create(info)

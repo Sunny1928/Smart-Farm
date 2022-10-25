@@ -66,6 +66,22 @@ db.blocks.belongsTo(db.farms,{
     as: "farm",
 })
 
+db.farms.hasMany(db.notes,{
+    as: "notes"
+})
+db.notes.belongsTo(db.farms,{
+    foreignKey: "farmId",
+    as: "farm",
+})
+
+db.sensors.hasMany(db.notes,{
+    as: "notes"
+})
+db.notes.belongsTo(db.sensors,{
+    foreignKey: "sensorId",
+    as: "sensor",
+})
+
 db.blocks.hasMany(db.smallBlocks,{
     as: "smallBlocks"
 })

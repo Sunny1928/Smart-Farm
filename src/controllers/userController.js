@@ -55,7 +55,6 @@ const login = async (req, res) => {
     try{
         const {account, password} = req.body
         const user = await User.findOne({where:{account: account}})
-        console.log(user)
         if(!user){
             return res.status(403).send({
                 error: 'The account does not exist'

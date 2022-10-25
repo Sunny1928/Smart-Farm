@@ -65,6 +65,19 @@ const getOneFarm = async (req, res) => {
     {
         model: db.users,
         as: "users"
+    },
+    {
+        model: db.notes,
+        as: "notes",
+        include: [{
+            model: db.smallBlocks,
+            as: "smallBlock",
+            include: [
+            { 
+                model: db.blocks,
+                as: "block",
+            }]
+        }],
     }]})
     res.status(200).send(farm)
 }
