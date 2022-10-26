@@ -1,6 +1,6 @@
 # smart-farm-server
 
-### Using docker compose:
+## Using docker compose:
 
 #### first install: 
     docker pull sunny1928/smart_farm
@@ -11,10 +11,10 @@
     (it might cause a problem, so stop it and run again)
     
 #### stop container:
-    docker compose down
+    docker compose stop
 
 
-### Without docker:
+## Without docker:
 
 #### first install:
     git clone https://github.com/Sunny1928/smart-farm-server.git
