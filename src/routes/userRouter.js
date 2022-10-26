@@ -14,4 +14,7 @@ router.get('/:id', isAuthenticated, userController.getOneUser)
 router.put('/:id', isAuthenticated, userController.updateUser)
 router.delete('/:id', isAuthenticated, userController.deleteUser)
 
+router.get('/line/:lineId', userController.getOneUserByLineId)
+
+
 module.exports = router

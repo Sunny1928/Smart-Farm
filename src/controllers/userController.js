@@ -21,32 +21,40 @@ let refreshTokens = []
 
 // log out
 const logout = async (req, res) => {
-    refreshTokens = refreshTokens.filter(token => token !== req.body.token)
-    res.sendStatus(204)
+    try{
+        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+        res.sendStatus(204)
+    }catch(err){
+        res.status(400).send()
+    }
 }
 
 // refresh token
 const refreshToken = async (req, res) => {
-    const refreshToken = req.body.token
-    if(refreshToken == null) return res.sendStatus(401)
-    if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
-    jwt.verify(refreshToken, config.authentication.REFRESH_TOKEN_SECRET, (err, user) => {
-        if(err) return res.sendStatus(403)
-        const userJson = {
-            id: user.id,
-            name: user.name
-        }
-        const accessToken = jwtSignUser(userJson)
-        const newRefreshToken = jwt.sign(userJson, config.authentication.REFRESH_TOKEN_SECRET, {
-            expiresIn: ONE_DAY*2
+    try{
+        const refreshToken = req.body.token
+        if(refreshToken == null) return res.sendStatus(401)
+        if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
+        jwt.verify(refreshToken, config.authentication.REFRESH_TOKEN_SECRET, (err, user) => {
+            if(err) return res.sendStatus(403)
+            const userJson = {
+                id: user.id,
+                name: user.name
+            }
+            const accessToken = jwtSignUser(userJson)
+            const newRefreshToken = jwt.sign(userJson, config.authentication.REFRESH_TOKEN_SECRET, {
+                expiresIn: ONE_DAY*2
+            })
+            refreshTokens.push(newRefreshToken)
+            res.status(200).json({
+                accessToken: accessToken,
+                refreshToken: newRefreshToken
+            })
         })
-        refreshTokens.push(newRefreshToken)
-        res.status(200).json({
-            accessToken: accessToken,
-            refreshToken: newRefreshToken
-        })
-    })
-    refreshTokens = refreshTokens.filter(token => token !== refreshToken)
+        refreshTokens = refreshTokens.filter(token => token !== refreshToken)
+    }catch(err){
+        res.status(400).send()
+    }
 }
  
 // login
@@ -70,7 +78,7 @@ const login = async (req, res) => {
 
         const userJson = {
             id: user.id,
-            name: user.name
+            farmId: user.farmId
         }
         const refreshToken = jwt.sign(userJson, config.authentication.REFRESH_TOKEN_SECRET,{
             expiresIn: ONE_DAY*2
@@ -113,42 +121,83 @@ const addUser = async (req, res) => {
 // 2. get all user
 
 const getAllUsers = async (req, res) => {
-    let users = await User.findAll({})
-    res.status(200).send(users)
+    try{
+        let users = await User.findAll({})
+        res.status(200).send(users)
+    } catch(err){
+        res.status(400).send()
+    }
 }
 
 // 3. get single user by id
 
 const getOneUser = async (req, res) => {
-    let id = req.params.id
-    let user = await User.findByPk(id,{
-        include: {
-            model: db.farms,
-            as: "farm",
+    try{
+        let id = req.params.id
+        let user = await User.findByPk(id,{
             include: {
-                model: db.users,
-                as: "users",
-                attributes: ['id', 'name', 'permission']
+                model: db.farms,
+                as: "farm",
+                include: {
+                    model: db.users,
+                    as: "users",
+                    attributes: ['id', 'name', 'permission']
+                }
+            },
+        })
+        res.status(200).send(user)
+    }catch(err){
+        res.status(400).send()
+    }
+}
+
+// 3. get single user by line id
+
+const getOneUserByLineId = async (req, res) => {
+    try{
+        let id = req.params.lineId
+        let user = await User.findOne({
+            where: {
+                LINE_ID: id
             }
-        },
-    })
-    res.status(200).send(user)
+        })
+        console.log(user)
+        const userJson = {
+            id: user.id,
+            farmId: user.farmId
+        }
+        const accessToken = jwtSignUser(userJson)
+        userJson.accessToken = accessToken
+        console.log(userJson)
+        res.status(200).send(userJson)
+    }catch(err){
+        res.status(400).send()
+    }
 }
 
 // 4. update user by id
 
 const updateUser = async (req, res) => {
-    let id = req.params.id
-    let user = await User.update(req.body, {where: { id: id }})
-    res.status(200).send(user)
+    try{
+        let id = req.params.id
+        let user = await User.update(req.body, {where: { id: id }})
+        console.log(user)
+        res.status(200).send(user)
+    }catch(err){
+        res.status(400).send()
+    }
 }
 
 // 5. delete user by id
 
 const deleteUser = async (req, res) => {
-    let id = req.params.id
-    await User.destroy({where: { id: id }})
-    res.status(200).send('User is deleted!')
+    try{
+        let id = req.params.id
+        await User.destroy({where: { id: id }})
+        res.status(200).send('User is deleted!')
+    }catch(err){
+        res.status(400).send()
+    }
 }
 
 module.exports = {
@@ -159,5 +208,6 @@ module.exports = {
     getAllUsers,
     getOneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getOneUserByLineId
 }
