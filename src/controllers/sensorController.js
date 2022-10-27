@@ -1,8 +1,39 @@
 const db = require('../models')
 
 const Sensor = db.sensors
+const ONE_DAY = 60 * 60 * 24
+
+// jwt
+
+const jwt = require('jsonwebtoken')
+const config = require('../config/config')
+
+function jwtSignSensor(sensor){
+    return jwt.sign(sensor, config.authentication.ACCESS_TOKEN_SECRET, {
+        expiresIn: ONE_DAY
+    })
+}
 
 // main work
+
+const accessToken = async (req, res) => {
+    try{
+        let id = req.params.id
+        let sensor = await Sensor.findOne({
+            where: {
+                id: id
+            }
+        })
+        const sensorJson = {
+            id: sensor.id
+        }
+        const accessToken = jwtSignSensor(sensorJson)
+        sensorJson.accessToken = accessToken
+        res.status(200).send(sensorJson)
+    }catch(err){
+        res.status(400).send()
+    }
+}
 
 // 1. create sensor
 
@@ -13,7 +44,6 @@ const addSensor = async (req, res) => {
     try{
         const sensor = await Sensor.create(info)
         res.status(200).send(sensor)
-        //console.log(sensor)
     }catch(err){
         res.status(400).send()
     }
@@ -35,7 +65,25 @@ const getAllSensors = async (req, res) => {
 const getOneSensor = async (req, res) => {
     try{
         let id = req.params.id
-        let sensor = await Sensor.findByPk(id, { include: ["healthDatas", "humidityDatas", "temperatureDatas"] })
+        let sensor = await Sensor.findByPk(id, { include: [
+            { 
+                model: db.healthDatas,
+                as: "healthDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                limit:10
+            }, 
+            {
+                model: db.humidityDatas,
+                as: "humidityDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                limit:10
+            }, 
+            {
+                model: db.temperatureDatas,
+                as: "temperatureDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                limit:10
+            }]})
         res.status(200).send(sensor)
     }catch(err){
         res.status(400).send()
@@ -71,5 +119,6 @@ module.exports = {
     getAllSensors,
     getOneSensor,
     updateSensor,
-    deleteSensor
+    deleteSensor,
+    accessToken
 }

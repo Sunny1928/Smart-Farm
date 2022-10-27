@@ -9,9 +9,10 @@ const Farm = db.farms
 const addFarm = async (req, res) => {
     let info = {
         name: req.body.name,
-        key: req.body.key // auto generalize
+        key: req.body.key, // auto generalize
+        warmingValue: req.body.warmingValue
     }
-
+    
     try{
         const farm = await Farm.create(info)
         res.status(200).send(farm)

@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         key:{
             type: DataTypes.STRING(100),
             // allowNull: false
+        },
+        warmingValue:{
+            type: DataTypes.INTEGER,
+            defaultValue: 90
         }
     })
 

@@ -8,6 +8,7 @@ router.get('/allSmallBlocks', isAuthenticated, smallBlockController.getAllSmallB
 
 router.get('/:id', isAuthenticated, smallBlockController.getOneSmallBlock)
 router.get('/new/:id', isAuthenticated, smallBlockController.getOneSmallBlockNewest)
+router.get('/line/:id', isAuthenticated, smallBlockController.getOneSmallBlockNewestByLine)
 router.put('/:id', isAuthenticated, smallBlockController.updateSmallBlock)
 router.delete('/:id', isAuthenticated, smallBlockController.deleteSmallBlock)
 

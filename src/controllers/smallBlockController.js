@@ -36,7 +36,40 @@ const getAllSmallBlocks = async (req, res) => {
 const getOneSmallBlock = async (req, res) => {
     try{
         let id = req.params.id
-        let smallBlock = await SmallBlock.findByPk(id, { include: ["notes", "healthDatas", "humidityDatas", "temperatureDatas"] })
+        let smallBlock = await SmallBlock.findByPk(id, { include: [
+        { 
+            model: db.healthDatas,
+            as: "healthDatas",
+            order: [[ 'createdAt', 'DESC' ]],
+            limit:10
+        }, 
+        {
+            model: db.humidityDatas,
+            as: "humidityDatas",
+            order: [[ 'createdAt', 'DESC' ]],
+            limit:10
+        }, 
+        {
+            model: db.temperatureDatas,
+            as: "temperatureDatas",
+            order: [[ 'createdAt', 'DESC' ]],
+            limit:10
+        },
+        {
+            model: db.notes,
+            as: "notes",
+            order: [[ 'createdAt', 'DESC' ]],
+            limit:10,
+            include: [{
+                model: db.smallBlocks,
+                as: "smallBlock",
+                include: [
+                { 
+                    model: db.blocks,
+                    as: "block",
+                }]
+            }],
+        }]})
         res.status(200).send(smallBlock)
     }catch(err){
         res.status(400).send()
@@ -75,6 +108,52 @@ const getOneSmallBlockNewest = async (req, res) => {
     }
 }
 
+const getOneSmallBlockNewestByLine = async (req, res) => {
+    try{
+        let id = req.params.id
+        let smallBlock = await SmallBlock.findByPk(id, { 
+            attributes:['id','name'],
+            include: [
+            { 
+                model: db.healthDatas,
+                as: "healthDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                attributes:['value'],
+                limit:1
+            }, 
+            {
+                model: db.humidityDatas,
+                as: "humidityDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                attributes:['value'],
+                limit:1
+            }, 
+            {
+                model: db.temperatureDatas,
+                as: "temperatureDatas",
+                order: [[ 'createdAt', 'DESC' ]],
+                attributes:['value'],
+                limit:1
+            },
+            { 
+                model: db.blocks,
+                as: "block",
+                attributes:['id','name'],
+                include:[
+                    { 
+                        model: db.farms,
+                        as: "farm",
+                        attributes:['id','name']
+                    }
+                ]
+            }] 
+        })
+        res.status(200).send(smallBlock)
+    }catch(err){
+        res.status(400).send()
+    }
+}
+
 // 4. update smallBlock by id
 
 const updateSmallBlock = async (req, res) => {
@@ -105,5 +184,6 @@ module.exports = {
     getOneSmallBlock,
     getOneSmallBlockNewest,
     updateSmallBlock,
-    deleteSmallBlock
+    deleteSmallBlock,
+    getOneSmallBlockNewestByLine
 }

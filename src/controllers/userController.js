@@ -17,12 +17,9 @@ function jwtSignUser(user){
 
 // main work
 
-let refreshTokens = []
-
 // log out
 const logout = async (req, res) => {
     try{
-        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
         res.sendStatus(204)
     }catch(err){
         res.status(400).send()
@@ -33,9 +30,14 @@ const logout = async (req, res) => {
 const refreshToken = async (req, res) => {
     try{
         const refreshToken = req.body.token
+        const id = req.body.userId
+        let user = await User.findOne({
+            where:{id: id},
+            attributes: ['id','refreshToken']
+        })
         if(refreshToken == null) return res.sendStatus(401)
-        if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
-        jwt.verify(refreshToken, config.authentication.REFRESH_TOKEN_SECRET, (err, user) => {
+        if(user.refreshToken != refreshToken) return res.sendStatus(403)
+        jwt.verify(refreshToken, config.authentication.REFRESH_TOKEN_SECRET, async (err, user) => {
             if(err) return res.sendStatus(403)
             const userJson = {
                 id: user.id,
@@ -45,13 +47,14 @@ const refreshToken = async (req, res) => {
             const newRefreshToken = jwt.sign(userJson, config.authentication.REFRESH_TOKEN_SECRET, {
                 expiresIn: ONE_DAY*2
             })
-            refreshTokens.push(newRefreshToken)
+            user["refreshToken"]=newRefreshToken
+            let new_user = await User.update(user, {where: { id: id }})
+            console.log(new_user)
             res.status(200).json({
                 accessToken: accessToken,
                 refreshToken: newRefreshToken
             })
         })
-        refreshTokens = refreshTokens.filter(token => token !== refreshToken)
     }catch(err){
         res.status(400).send()
     }
@@ -62,7 +65,7 @@ const refreshToken = async (req, res) => {
 const login = async (req, res) => {
     try{
         const {account, password} = req.body
-        const user = await User.findOne({where:{account: account}})
+        let user = await User.findOne({where:{account: account}})
         if(!user){
             return res.status(403).send({
                 error: 'The account does not exist'
@@ -83,8 +86,12 @@ const login = async (req, res) => {
         const refreshToken = jwt.sign(userJson, config.authentication.REFRESH_TOKEN_SECRET,{
             expiresIn: ONE_DAY*2
         })
-        refreshTokens.push(refreshToken)
 
+        user = {
+            refreshToken: refreshToken
+        }
+
+        await User.update(user, {where: { id: userJson.id }})
         res.status(200).send({
             user: userJson,
             accessToken: jwtSignUser(userJson),
@@ -106,7 +113,8 @@ const addUser = async (req, res) => {
         password: req.body.password,
         LINE_ID: req.body.LINE_ID,
         permission: req.body.permission,
-        farmId: req.body.farmId
+        farmId: req.body.farmId,
+        lineSmallBlockId: req.body.lineSmallBlockId
     }
     try{
         const user = await User.create(info)
@@ -164,11 +172,12 @@ const getOneUserByLineId = async (req, res) => {
         console.log(user)
         const userJson = {
             id: user.id,
-            farmId: user.farmId
+            farmId: user.farmId,
         }
+        userJson.lineSmallBlockId = user.lineSmallBlockId
         const accessToken = jwtSignUser(userJson)
         userJson.accessToken = accessToken
-        console.log(userJson)
+        // console.log(userJson)
         res.status(200).send(userJson)
     }catch(err){
         res.status(400).send()
@@ -181,7 +190,7 @@ const updateUser = async (req, res) => {
     try{
         let id = req.params.id
         let user = await User.update(req.body, {where: { id: id }})
-        console.log(user)
+        // console.log(user)
         res.status(200).send(user)
     }catch(err){
         res.status(400).send()

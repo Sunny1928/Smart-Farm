@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         refreshToken:{
             type: DataTypes.STRING
+        },
+        lineSmallBlockId:{
+            type: DataTypes.INTEGER,
+            defaultValue: 1
         }
     }, 
     {
