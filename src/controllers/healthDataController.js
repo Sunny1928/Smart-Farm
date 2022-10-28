@@ -1,37 +1,15 @@
 
 const db = require('../models')
+const config = require('../config/config')
 
 const HealthData = db.healthDatas
 const Note = db.notes
 const Farm = db.farms
 const SmallBlock = db.smallBlocks
-var nodemailer = require('nodemailer');
+var sendEmail = require('./sendEmail');
 // main work
 
 // 1. create healthData
-function sendEmail(user, note) {
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'smartfarmpysy@gmail.com',
-          pass: 'bqesxaekougkqbsk'
-        }
-    })
-      
-    var mailOptions = {
-    from: 'smartfarmpysy@gmail.com',
-    to: user.account,
-    subject: '你的農場健康度低於標準 - Smart Farm',
-    text: note.comment
-    }
-    
-    transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-        console.log(error);
-    } else {
-        console.log('Email sent: ' + info.response);
-    }})
-}
 
 const addHealthData = async (req, res) => {
     let info = {
@@ -76,7 +54,7 @@ const addHealthData = async (req, res) => {
                 attributes:['id', 'warmingValue'],
             }
         }]})
-        if(healthData.value>=smallBlock.block.farm.warmingValue){
+        if(healthData.value>=smallBlock.block.farm.warmingValue || healthData.value == -1){
             res.status(200).send(healthData)
         }else{
             // save a note
@@ -116,15 +94,14 @@ const addHealthData = async (req, res) => {
             var request = require('request');
             request.post({ 
                 headers: {'content-type' : 'application/json'},
-                url: "https://0642-2001-b011-c001-1fd0-c8bc-8774-57f2-ba40.jp.ngrok.io/warning_note", 
+                url: config.line_url+"warning_note", 
                 body: JSON.stringify(item)}, function(error, response, body){
                 console.log(body); 
             })
             // send email
             farm.users.forEach(user=>{
                 if(user.account.includes('@')){
-                    console.log(user)
-                    sendEmail(user, note)
+                    sendEmail(user, note.comment)
                 }
             })
         }

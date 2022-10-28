@@ -102,6 +102,16 @@ const getOneSmallBlockNewest = async (req, res) => {
                 limit:10
             }] 
         })
+
+        smallBlock.healthDatas.sort((a,b) =>{
+            return new Date(a.createdAt) - new Date(b.createdAt)
+        })
+        smallBlock.humidityDatas.sort((a,b) =>{
+            return new Date(a.createdAt) - new Date(b.createdAt)
+        })
+        smallBlock.temperatureDatas.sort((a,b) =>{
+            return new Date(a.createdAt) - new Date(b.createdAt)
+        })
         res.status(200).send(smallBlock)
     }catch(err){
         res.status(400).send()

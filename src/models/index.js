@@ -147,9 +147,9 @@ db.temperatureDatas.belongsTo(db.sensors,{
     as: "sensor",
 })
 
-// db.sequelize.sync({force:false})
 
-db.sequelize.sync({force:false, alter: true })
+// db.sequelize.sync({force:false, alter: true })
+db.sequelize.sync({force:false})
 .then(() => {
     console.log('yes re-sync done!')
 })

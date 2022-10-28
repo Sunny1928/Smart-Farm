@@ -5,6 +5,7 @@ const isAuthenticated = require('../policies/isAuthenticated')
 
 router.post('/addFarm', farmController.addFarm)
 router.get('/allFarms', isAuthenticated, farmController.getAllFarms)
+router.get('/email', isAuthenticated, farmController.sendEmailToFarmEveryday)
 
 router.get('/:id', isAuthenticated, farmController.getOneFarm)
 router.put('/:id', isAuthenticated, farmController.updateFarm)
