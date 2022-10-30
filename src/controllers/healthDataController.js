@@ -101,7 +101,11 @@ const addHealthData = async (req, res) => {
             // send email
             farm.users.forEach(user=>{
                 if(user.account.includes('@')){
-                    sendEmail(user, note.comment)
+                    let email={
+                        message: note.comment,
+                        subject: 'Smart Farm - 你的農場健康度低於標準'
+                    }
+                    sendEmail(user, email)
                 }
             })
         }

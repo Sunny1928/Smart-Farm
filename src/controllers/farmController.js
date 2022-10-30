@@ -133,7 +133,11 @@ const sendEmailToFarmEveryday = async () =>{
             farm.users.forEach(user=>{
                 if(user.account.includes('@')){
                     // console.log(user)
-                    sendEmail(user, message)
+                    let email={
+                        message: message,
+                        subject: 'Smart Farm - 農場日總結'
+                    }
+                    sendEmail(user, email)
                 }
             })
 
@@ -150,7 +154,7 @@ const sendEmailToFarmEveryday = async () =>{
                 console.log(body)
             })
         })
-        // res.status(200).send()
+        // res.status(200).send(farms) 
     }catch(err){
         console.log(err)
         // res.status(400).send()

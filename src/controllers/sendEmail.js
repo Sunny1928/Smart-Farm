@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-function sendEmail(user, message) {
+function sendEmail(user, item) {
   var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -12,8 +12,8 @@ function sendEmail(user, message) {
   var mailOptions = {
   from: 'smartfarmpysy@gmail.com',
   to: user.account,
-  subject: '你的農場健康度低於標準 - Smart Farm',
-  text: message
+  subject: item.subject,
+  text: item.message
   }
   
   transporter.sendMail(mailOptions, function(error, info){
