@@ -45,7 +45,8 @@ app.use(url+'sensors', sensorRouter)
 
 const schedule  = require('node-schedule')
 const farmController = require('./controllers/farmController')
-
+// '00 00 20 * * 0-6'
+// '30 * * * * *'
 var sche = schedule.scheduleJob('00 00 20 * * 0-6', () => {
   console.log('now is :' + new Date)
   farmController.sendEmailToFarmEveryday()

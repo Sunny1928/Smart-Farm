@@ -63,7 +63,8 @@ const sendEmailToFarmEveryday = async () =>{
         },
         {
             model: db.users,
-            as: "users"
+            as: "users",
+            attributes:['name', 'account', 'id', 'LINE_ID'],
         }]})
         farms.forEach(farm=>{
             let message=farm.name+'健康評估報告\n\n'
@@ -147,6 +148,8 @@ const sendEmailToFarmEveryday = async () =>{
                 "users":farm.users
             }
             // console.log(item)
+            // res.status(200).send(item) 
+
             request.post({ 
                 headers: {'content-type' : 'application/json'},
                 url: config.line_url+"monthly_report", 
@@ -154,7 +157,6 @@ const sendEmailToFarmEveryday = async () =>{
                 console.log(body)
             })
         })
-        // res.status(200).send(farms) 
     }catch(err){
         console.log(err)
         // res.status(400).send()
