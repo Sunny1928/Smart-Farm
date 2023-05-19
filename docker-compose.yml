@@ -6,9 +6,9 @@ services:
     image: sunny1928/smart_farm
     ports:
       - 8088:8088
-    volumes:
-      - .:/app
-      - '/app/node_modules' # ignore node_modules
+    # volumes:
+      # - .:/app
+      # - '/app/node_modules' # ignore node_modules
     depends_on:
       - mysql_server
     restart: on-failure
