@@ -12,7 +12,7 @@ app.use(express.static('view/dist'))
 
 
 const corsOptions ={
-    origin:['http://localhost:5500'], 
+    origin:['http://localhost:8088'], 
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }
@@ -43,14 +43,14 @@ app.use(url+'humidityDatas', humidityDataRouter)
 app.use(url+'temperatureDatas', temperatureDataRouter)
 app.use(url+'sensors', sensorRouter)
 
-const schedule  = require('node-schedule')
-const farmController = require('./controllers/farmController')
+// const schedule  = require('node-schedule')
+// const farmController = require('./controllers/farmController')
 // '00 00 20 * * 0-6'
 // '30 * * * * *'
-var sche = schedule.scheduleJob('00 00 20 * * 0-6', () => {
-  console.log('now is :' + new Date)
-  farmController.sendEmailToFarmEveryday()
-})
+// var sche = schedule.scheduleJob('00 00 20 * * 0-6', () => {
+//   console.log('now is :' + new Date)
+//   farmController.sendEmailToFarmEveryday()
+// })
 
 app.listen(process.env.PORT || 8088, function(req , res ){
     console.log('server is running...'); 

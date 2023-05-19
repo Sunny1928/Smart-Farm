@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+
+  app:
+    image: sunny1928/smart_farm
+    ports:
+      - 8088:8088
+    volumes:
+      - .:/app
+      - '/app/node_modules' # ignore node_modules
+    depends_on:
+      - mysql_server
+    restart: on-failure
+
+
+  mysql_server:
+    image: mysql
+    environment:
+      - MYSQL_DATABASE=smart_farm_db 
+      - MYSQL_ROOT_PASSWORD=a10955
+
+  
+
+  

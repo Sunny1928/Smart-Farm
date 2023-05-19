@@ -1,10 +1,9 @@
 module.exports = {
     db: {
-        HOST : 'localhost',
+        HOST : 'mysql_server',
         USER : 'root',
-        PASSWORD: '',
-        // PORT: '3306',
-        PORT: '3308',
+        // PORT:"3308",
+        PASSWORD: 'a10955',
         DB: 'smart_farm_db',
         dialect: 'mysql',
         pool: {
