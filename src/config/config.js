@@ -6,7 +6,7 @@ module.exports = {
         PASSWORD: '',
 
         // run in docker
-        // HOST : 'mysql_server',
+        // HOST : 'linux_sql',
         // PASSWORD: 'a10955',
 
         USER : 'root',
