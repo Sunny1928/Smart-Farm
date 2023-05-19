@@ -12,7 +12,7 @@ app.use(express.static('view/dist'))
 
 
 const corsOptions ={
-    origin:['http://localhost:8081', 'http://localhost:8080', "http://192.168.31.20:8080"], 
+    origin:['http://localhost:5500'], 
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }
