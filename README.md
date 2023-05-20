@@ -8,7 +8,6 @@
 
 #### start container:
     docker compose up
-    (it might cause a problem, so stop it and run again)
     
 #### stop container:
     docker compose stop
