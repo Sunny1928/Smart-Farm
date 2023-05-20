@@ -1,6 +1,10 @@
 # smart-farm-server
 
-## Using docker compose:
+## Build docker compose locally:
+    git clone https://github.com/Sunny1928/smart-farm-server.git
+    docker compose up
+
+## Use docker compose with arm:
 
 #### first install: 
     docker pull sunny1928/smart_farm
