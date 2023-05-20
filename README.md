@@ -4,7 +4,7 @@
 
 #### first install: 
     docker pull sunny1928/smart_farm
-    download docker-compose
+    // download docker-compose manually
 
 #### start container:
     docker compose up

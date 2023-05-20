@@ -1,13 +1,13 @@
 module.exports = {
     db: {
         // local 
-        HOST : 'localhost',
-        PORT:"3308",
-        PASSWORD: '',
+        // HOST : 'localhost',
+        // PORT:"3308",
+        // PASSWORD: '',
 
         // run in docker
-        // HOST : 'linux_sql',
-        // PASSWORD: 'a10955',
+        HOST : 'linux_sql',
+        PASSWORD: 'a10955',
 
         USER : 'root',
         DB: 'smart_farm_db',
