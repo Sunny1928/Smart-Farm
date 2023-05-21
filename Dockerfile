@@ -12,6 +12,6 @@ EXPOSE 8088
 
 VOLUME [ "/app/node_modules" ]
 
-ENTRYPOINT [ "./wait-for-it.sh" , "linux_sql:3306" , "--" ]
+ENTRYPOINT [ "./wait-for-it.sh" , "linux_sql:3306", "-t", "60" , "--" ]
 
 CMD ["npm", "run", "start"]
